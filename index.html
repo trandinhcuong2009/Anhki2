@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn thi trắc nghiệm Tiếng Anh 11 - Học kỳ 2 (2025-2026)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .toolbar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            background-color: #3498db;
+            color: white;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .script-box {
+            background: #ecf0f1;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin-bottom: 15px;
+            white-space: pre-wrap;
+            display: none;
+        }
+        .script-box.show {
+            display: block;
+        }
+        .question {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #fafafa;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .question.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        .question.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        .q-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .options label {
+            display: block;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+        .feedback {
+            margin-top: 8px;
+            font-weight: bold;
+            display: none;
+        }
+        .feedback.show {
+            display: block;
+        }
+        .score-panel {
+            text-align: center;
+            font-size: 20px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #e8f0fe;
+            border-radius: 8px;
+            display: none;
+        }
+        .score-panel.show {
+            display: block;
+        }
+        .passage {
+            background: #f1f8e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>ÔN THI TRẮC NGHIỆM MÔN TIẾNG ANH 11<br>Học kỳ 2 (2025-2026)</h1>
+    <div class="toolbar">
+        <button id="toggleScriptBtn">Hiện Script Listening</button>
+        <button id="submitBtn">Nộp bài</button>
+        <button id="resetBtn">Làm lại</button>
+    </div>
+    <div id="scriptContainer"></div>
+    <div class="score-panel" id="scorePanel"></div>
+    <form id="quizForm"></form>
+</div>
+
+<script>
+    // Tất cả câu hỏi và đáp án (từ đề cương)
+    const quizData = [
+        // ========== LISTENING TASK 1 ==========
+        { section: "LISTENING Task 1", type: "mcq", text: "1. Why are heritage sites important?", options: ["A. They are modern landmarks.", "B. They serve as tourist attractions.", "C. They allow us to understand history and culture.", "D. They contribute to climate change awareness."], answer: 2, scriptPart: 1 },
+        { section: "LISTENING Task 1", type: "mcq", text: "2. How does climate change affect heritage sites?", options: ["A. It leads to erosion due to lower sea levels.", "B. It helps to preserve heritage sites better.", "C. It causes damage or destruction to heritage sites.", "D. It makes heritage sites become more attractive."], answer: 2, scriptPart: 1 },
+        { section: "LISTENING Task 1", type: "mcq", text: "3. Which challenge is the historic city of Venice facing?", options: ["A. Rising temperatures are causing frequent heavy rainfall.", "B. Sea-level rise is harming the city's tourism.", "C. Rising temperatures are damaging the city's architecture.", "D. Sea-level rise is destroying the city's artworks."], answer: 3, scriptPart: 1 },
+        { section: "LISTENING Task 1", type: "mcq", text: "4. What is one thing individuals can do to protect heritage sites?", options: ["A. decreasing carbon emissions", "B. supporting unsustainable practices", "C. stopping visiting heritage sites", "D. buying historical artefacts"], answer: 0, scriptPart: 1 },
+        { section: "LISTENING Task 1", type: "mcq", text: "5. What can governments and organisations do to preserve heritage sites?", options: ["A. They ignore international cooperation.", "B. They adopt policies for preserving heritage sites.", "C. They implement policies to attract more tourists.", "D. They invest money in developing new sites."], answer: 1, scriptPart: 1 },
+
+        // ========== LISTENING TASK 2 ==========
+        { section: "LISTENING Task 2", type: "tf", text: "6. It's important for parents to respect their teens' privacy.", answer: "True", scriptPart: 2 },
+        { section: "LISTENING Task 2", type: "tf", text: "7. Texting may be the best means of communication between parents and teens.", answer: "True", scriptPart: 2 },
+        { section: "LISTENING Task 2", type: "tf", text: "8. Doing things together makes parents and teens feel more connected.", answer: "True", scriptPart: 2 },
+        { section: "LISTENING Task 2", type: "tf", text: "9. Involving teens in decision-making can start with planning meals.", answer: "False", scriptPart: 2 },
+        { section: "LISTENING Task 2", type: "tf", text: "10. Parents should talk to their children about their children's expectations.", answer: "False", scriptPart: 2 },
+        { section: "LISTENING Task 2", type: "tf", text: "11. Teens will become confident decision-makers with practice.", answer: "True", scriptPart: 2 },
+
+        // ========== LISTENING TASK 3 ==========
+        { section: "LISTENING Task 3", type: "tf", text: "12. Amber felt like there was no one she could trust at school.", answer: "True", scriptPart: 3 },
+        { section: "LISTENING Task 3", type: "tf", text: "13. Amber told her mother about being called 'fat' at school.", answer: "False", scriptPart: 3 },
+        { section: "LISTENING Task 3", type: "tf", text: "14. Amber finally could open up with someone at school.", answer: "True", scriptPart: 3 },
+        { section: "LISTENING Task 3", type: "tf", text: "15. Words cannot badly affect how someone thinks of themselves.", answer: "False", scriptPart: 3 },
+        { section: "LISTENING Task 3", type: "tf", text: "16. Students are encouraged to always tell the bully to stop.", answer: "False", scriptPart: 3 },
+
+        // ========== PRONUNCIATION TASK 1 ==========
+        { section: "PRONUNCIATION Task 1", type: "mcq", text: "17. Find the word with different underlined part pronunciation.", options: ["A. required", "B. remove", "C. dependent", "D. pressure"], answer: 3 },
+        { section: "PRONUNCIATION Task 1", type: "mcq", text: "18. Find the word with different underlined part pronunciation.", options: ["A. effort", "B. organized", "C. store", "D. sort"], answer: 0 },
+        { section: "PRONUNCIATION Task 1", type: "mcq", text: "19. Find the word with different underlined part pronunciation.", options: ["A. identify", "B. apply", "C. laundry", "D. dryer"], answer: 2 },
+        { section: "PRONUNCIATION Task 1", type: "mcq", text: "20. Find the word with different underlined part pronunciation.", options: ["A. separate", "B. motivated", "C. place", "D. manage"], answer: 3 },
+        { section: "PRONUNCIATION Task 1", type: "mcq", text: "21. Find the word with different underlined part pronunciation.", options: ["A. chore", "B. characteristic", "C. achieve", "D. challenging"], answer: 1 },
+        { section: "PRONUNCIATION Task 1", type: "mcq", text: "22. Find the word with different underlined part pronunciation.", options: ["A. poverty", "B. body", "C. offensive", "D. policy"], answer: 2 },
+        { section: "PRONUNCIATION Task 1", type: "mcq", text: "23. Find the word with different underlined part pronunciation.", options: ["A. frighten", "B. skip", "C. physical", "D. fit"], answer: 0 },
+        { section: "PRONUNCIATION Task 1", type: "mcq", text: "24. Find the word with different underlined part pronunciation.", options: ["A. suffer", "B. bully", "C. struggle", "D. fun"], answer: 1 },
+
+        // ========== PRONUNCIATION TASK 2 ==========
+        { section: "PRONUNCIATION Task 2", type: "mcq", text: "25. Find word with different stress pattern.", options: ["A. around", "B. pressure", "C. effort", "D. freedom"], answer: 0 },
+        { section: "PRONUNCIATION Task 2", type: "mcq", text: "26. Find word with different stress pattern.", options: ["A. responsible", "B. activity", "C. university", "D. identify"], answer: 2 },
+        { section: "PRONUNCIATION Task 2", type: "mcq", text: "27. Find word with different stress pattern.", options: ["A. management", "B. reliable", "C. motivated", "D. babysitting"], answer: 1 },
+        { section: "PRONUNCIATION Task 2", type: "mcq", text: "28. Find word with different stress pattern.", options: ["A. responsibility", "B. extracurricular", "C. characteristic", "D. independence"], answer: 3 },
+        { section: "PRONUNCIATION Task 2", type: "mcq", text: "29. Find word with different stress pattern.", options: ["A. policy", "B. confidence", "C. offensive", "D. alcohol"], answer: 2 },
+        { section: "PRONUNCIATION Task 2", type: "mcq", text: "30. Find word with different stress pattern.", options: ["A. hesitate", "B. depression", "C. bullying", "D. sympathy"], answer: 1 },
+        { section: "PRONUNCIATION Task 2", type: "mcq", text: "31. Find word with different stress pattern.", options: ["A. argue", "B. body", "C. pressure", "D. promote"], answer: 3 },
+        { section: "PRONUNCIATION Task 2", type: "mcq", text: "32. Find word with different stress pattern.", options: ["A. provide", "B. reserve", "C. mammal", "D. marine"], answer: 2 },
+
+        // ========== VOCABULARY ==========
+        { section: "VOCABULARY", type: "mcq", text: "33. Developing good time management skills can help you _______ your tasks effectively.", options: ["A. store", "B. sort", "C. combine", "D. manage"], answer: 3 },
+        { section: "VOCABULARY", type: "mcq", text: "34. Students should be encouraged to speak out against _______ when they see it happening.", options: ["A. social group", "B. presentation skill", "C. school performance", "D. body shaming"], answer: 3 },
+        { section: "VOCABULARY", type: "mcq", text: "35. You cannot take anything from the sea here. It is a _______ zone.", options: ["A. no-taking", "B. no-taken", "C. no-take", "D. no-took"], answer: 2 },
+        { section: "VOCABULARY", type: "mcq", text: "36. Air, water and rock are _______ things in the environment, but they are important.", options: ["A. no-living", "B. no-lived", "C. non-lived", "D. non-living"], answer: 3 },
+        { section: "VOCABULARY", type: "mcq", text: "37. Developing a sense of _______ can help students overcome challenges.", options: ["A. response", "B. responsible", "C. responsibility", "D. irresponsibility"], answer: 2 },
+        { section: "VOCABULARY", type: "mcq", text: "38. Schools often have _______ actions to protect students.", options: ["A. anti-bullying", "B. case", "C. distance", "D. awareness"], answer: 0 },
+        { section: "VOCABULARY", type: "mcq", text: "39. It's safer to stay with friends, _______ bullies are less likely to target a group.", options: ["A. although", "B. besides", "C. because", "D. as a result"], answer: 2 },
+        { section: "VOCABULARY", type: "mcq", text: "40. Peer pressure can encourage students to study harder. _______, it leads to better performance.", options: ["A. In addition", "B. Therefore", "C. Despite", "D. Since"], answer: 1 },
+        { section: "VOCABULARY", type: "mcq", text: "41. _______ the negative impact on mental health, cyberbullying can affect academic performance.", options: ["A. As a result", "B. In spite of", "C. Besides", "D. Because of"], answer: 2 },
+        { section: "VOCABULARY", type: "mcq", text: "42. This mangrove forest is of _______ importance.", options: ["A. essential", "B. biological", "C. alternative", "D. endangered"], answer: 1 },
+        { section: "VOCABULARY", type: "mcq", text: "43. One of Vinh's hobbies is _______.", options: ["A. bird-watch", "B. bird-watched", "C. watched-bird", "D. bird-watching"], answer: 3 },
+        { section: "VOCABULARY", type: "mcq", text: "44. Giang talked about _______ for 3 colleges last year.", options: ["A. having applied", "B. applying to", "C. to apply", "D. to have applied"], answer: 0 },
+        { section: "VOCABULARY", type: "mcq", text: "45. Vuong denied _______ an academic degree in computer science.", options: ["A. offer", "B. having offered", "C. getting", "D. having gotten"], answer: 3 },
+        { section: "VOCABULARY", type: "mcq", text: "46. We turned on the fan _______ the room was hot.", options: ["A. due to", "B. despite", "C. even though", "D. because"], answer: 3 },
+        { section: "VOCABULARY", type: "mcq", text: "47. He is not scared to be the _______. He can say no to bad things.", options: ["A. poverty line", "B. odd-one-out", "C. social issue", "D. cyberbullying"], answer: 1 },
+        { section: "VOCABULARY", type: "mcq", text: "48. Students go to university to _______ their dreams.", options: ["A. follow", "B. do", "C. detest", "D. value"], answer: 0 },
+        { section: "VOCABULARY", type: "mcq", text: "49. The best time _______ the Flag Tower of Ha Noi is during the evening.", options: ["A. visiting", "B. visited", "C. to visit", "D. to be visited"], answer: 2 },
+        { section: "VOCABULARY", type: "mcq", text: "50. The Cham Towers are carefully preserved _______ tourists.", options: ["A. to be attracted", "B. to attract", "C. to attracting", "D. attracted"], answer: 1 },
+        { section: "VOCABULARY", type: "mcq", text: "51. The mangrove forest is surrounded by many _______.", options: ["A. waywaters", "B. wayswater", "C. waterways", "D. watersway"], answer: 2 },
+        { section: "VOCABULARY", type: "mcq", text: "52. The _______ of tigers is done in most national parks.", options: ["A. conservation", "B. conversation", "C. chain", "D. zone"], answer: 0 },
+        { section: "VOCABULARY", type: "mcq", text: "53. Many students experienced body shaming as they are not _______.", options: ["A. drunk", "B. slim", "C. painful", "D. offensive"], answer: 1 },
+        { section: "VOCABULARY", type: "mcq", text: "54. They are _______ fun of him because of his clothes.", options: ["A. hanging", "B. living", "C. making", "D. controlling"], answer: 2 },
+        { section: "VOCABULARY", type: "mcq", text: "55. Living below the _______ is a big problem for some students.", options: ["A. school performance", "B. peer influence", "C. social group", "D. poverty line"], answer: 3 },
+
+        // ========== READING 1 ==========
+        { section: "READING 1", type: "mcq", text: "56. (Passage 1) Peers affect each other... Question 1:", options: ["A. goes", "B. makes", "C. takes", "D. sets"], answer: 0, passage: "READING PASSAGE 1: Peers affect each other just by spending time together..." },
+        { section: "READING 1", type: "mcq", text: "57. Question 2:", options: ["A. which", "B. whom", "C. who", "D. why"], answer: 2 },
+        { section: "READING 1", type: "mcq", text: "58. Question 3:", options: ["A. being", "B. to be", "C. be", "D. been"], answer: 1 },
+        { section: "READING 1", type: "mcq", text: "59. Question 4:", options: ["A. of", "B. from", "C. into", "D. with"], answer: 2 },
+        { section: "READING 1", type: "mcq", text: "60. Question 5:", options: ["A. target", "B. consider", "C. argue", "D. skip"], answer: 3 },
+
+        // ========== READING 2 ==========
+        { section: "READING 2", type: "mcq", text: "61. (Passage 2) Question 1:", options: ["A. specific", "B. formal", "C. official", "D. royal"], answer: 0, passage: "READING PASSAGE 2: In contrast to what many parents believe..." },
+        { section: "READING 2", type: "mcq", text: "62. Question 2:", options: ["A. these", "B. that", "C. this", "D. those"], answer: 3 },
+        { section: "READING 2", type: "mcq", text: "63. Question 3:", options: ["A. the", "B. a", "C. Ø", "D. one"], answer: 1 },
+        { section: "READING 2", type: "mcq", text: "64. Question 4:", options: ["A. So", "B. Therefore", "C. Yet", "D. Except"], answer: 2 },
+        { section: "READING 2", type: "mcq", text: "65. Question 5:", options: ["A. see", "B. taste", "C. smell", "D. hear"], answer: 3 },
+
+        // ========== READING 3 ==========
+        { section: "READING 3", type: "mcq", text: "66. (Passage 3) Question 1:", options: ["A. take", "B. make", "C. do", "D. get"], answer: 1, passage: "READING PASSAGE 3: Achieving independence is an essential part..." },
+        { section: "READING 3", type: "mcq", text: "67. Question 2:", options: ["A. autonomist", "B. autonomous", "C. autonomously", "D. autonomy"], answer: 3 },
+        { section: "READING 3", type: "mcq", text: "68. Question 3:", options: ["A. who", "B. which", "C. where", "D. when"], answer: 1 },
+        { section: "READING 3", type: "mcq", text: "69. Question 4:", options: ["A. However", "B. Moreover", "C. Although", "D. Hence"], answer: 3 },
+        { section: "READING 3", type: "mcq", text: "70. Question 5:", options: ["A. at", "B. on", "C. of", "D. in"], answer: 0 },
+
+        // ========== READING 4 ==========
+        { section: "READING 4", type: "mcq", text: "71. (Passage 4) What is the main idea?", options: ["A. The appearance of physical bullying", "B. The emotional and health effects of physical bullying on victims", "C. The positive effects of bullying", "D. Strategies to prevent bullying"], answer: 1, passage: "READING PASSAGE 4: Bullying leads to a decrease in academic performance..." },
+        { section: "READING 4", type: "mcq", text: "72. The word 'they' in paragraph 2 refers to ___", options: ["A. researchers", "B. achievers", "C. victims", "D. teenagers"], answer: 2 },
+        { section: "READING 4", type: "mcq", text: "73. The word 'despair' is closest in meaning to ___", options: ["A. aim", "B. anger", "C. policy", "D. depression"], answer: 3 },
+        { section: "READING 4", type: "mcq", text: "74. What is somatization?", options: ["A. fear of bullying", "B. physical injuries from bullying", "C. physical symptoms caused by psychological factors", "D. a type of bullying behaviour"], answer: 2 },
+        { section: "READING 4", type: "mcq", text: "75. Which is NOT true?", options: ["A. Victims with depression experience more serious conditions.", "B. Victims avoid class to not be noticed.", "C. Victims may lead to health issues.", "D. Victims may become labelled as high achievers."], answer: 3 },
+
+        // ========== READING 5 ==========
+        { section: "READING 5", type: "mcq", text: "76. (Passage 5) Best title?", options: ["A. Teens' struggle for Independence", "B. Raising Happy Adults", "C. Benefits of Teen Independence", "D. Importance of Parental Control"], answer: 0, passage: "READING PASSAGE 5: The transition from child to adult..." },
+        { section: "READING 5", type: "mcq", text: "77. 'they' in paragraph 2 refers to ___", options: ["A. transitions", "B. psychologists", "C. teens", "D. parents"], answer: 2 },
+        { section: "READING 5", type: "mcq", text: "78. 'frustrating' is closest in meaning to ___", options: ["A. pleasant", "B. annoying", "C. satisfying", "D. challenging"], answer: 1 },
+        { section: "READING 5", type: "mcq", text: "79. What is one concern parents might have?", options: ["A. teens become too dependent", "B. friends they approve of", "C. identity opposed to their values", "D. share more about their lives"], answer: 2 },
+        { section: "READING 5", type: "mcq", text: "80. Which is NOT true?", options: ["A. Individuation can be unenjoyable.", "B. Individuation is an unhealthy process leading to problems.", "C. Failure to separate leads to difficulty.", "D. Individuation helps become successful adult."], answer: 1 },
+
+        // ========== READING 6 ==========
+        { section: "READING 6", type: "mcq", text: "81. (Passage 6) Best title?", options: ["A. University Enrollment Statistics", "B. Higher Education Benefits", "C. Apprenticeships", "D. Accessible Professions"], answer: 1, passage: "READING PASSAGE 6: According to UCAS..." },
+        { section: "READING 6", type: "mcq", text: "82. What percentage attends higher education by age 30?", options: ["A. approximately 20%", "B. approximately 30%", "C. approximately 40%", "D. approximately 50%"], answer: 3 },
+        { section: "READING 6", type: "mcq", text: "83. 'advent' is closest in meaning to ___", options: ["A. arrival", "B. end", "C. purpose", "D. method"], answer: 0 },
+        { section: "READING 6", type: "mcq", text: "84. 'it' in paragraph 3 refers to ___", options: ["A. university", "B. profession", "C. subject", "D. student"], answer: 2 },
+        { section: "READING 6", type: "mcq", text: "85. Which is NOT true?", options: ["A. One-third of 18-year-olds begin university.", "B. If students love the subject they can choose university.", "C. The 'uni experience' involves living independently and joining clubs.", "D. Teaching is a career only accessible through a degree."], answer: 2 },
+
+        // ========== CLOSEST MEANING ==========
+        { section: "CLOSEST MEANING", type: "mcq", text: "86. 'running out of' means:", options: ["A. doing up", "B. using up", "C. making up", "D. giving up"], answer: 1 },
+        { section: "CLOSEST MEANING", type: "mcq", text: "87. 'an arm and a leg' means:", options: ["A. well-being", "B. nothing", "C. inheritance", "D. a fortune"], answer: 3 },
+        { section: "CLOSEST MEANING", type: "mcq", text: "88. 'stylish' means:", options: ["A. fashionable", "B. funny", "C. major", "D. verbal"], answer: 0 },
+        { section: "CLOSEST MEANING", type: "mcq", text: "89. 'urgent' means:", options: ["A. violent", "B. drunk", "C. pressing", "D. aware"], answer: 2 },
+        { section: "CLOSEST MEANING", type: "mcq", text: "90. 'pressure' means:", options: ["A. encouragement", "B. relaxation", "C. stress", "D. disagreement"], answer: 2 },
+        { section: "CLOSEST MEANING", type: "mcq", text: "91. 'motivation' means:", options: ["A. Encouragement", "B. Freedom", "C. Discouragement", "D. Organization"], answer: 0 },
+
+        // ========== OPPOSITE MEANING ==========
+        { section: "OPPOSITE MEANING", type: "mcq", text: "92. Opposite of 'innovative'", options: ["A. cutting-edge", "B. common", "C. traditional", "D. original"], answer: 2 },
+        { section: "OPPOSITE MEANING", type: "mcq", text: "93. Opposite of 'cost-effective'", options: ["A. extravagant", "B. economical", "C. thrilling", "D. reasonable"], answer: 0 },
+        { section: "OPPOSITE MEANING", type: "mcq", text: "94. Opposite of 'offensive'", options: ["A. pleasant", "B. annoying", "C. slim", "D. illegal"], answer: 0 },
+        { section: "OPPOSITE MEANING", type: "mcq", text: "95. Opposite of 'promote'", options: ["A. develop", "B. prevent", "C. argue", "D. frighten"], answer: 1 },
+        { section: "OPPOSITE MEANING", type: "mcq", text: "96. Opposite of 'challenging'", options: ["A. demanding", "B. unpleasant", "C. enjoyable", "D. flexible"], answer: 2 },
+        { section: "OPPOSITE MEANING", type: "mcq", text: "97. Opposite of 'confident'", options: ["A. reliable", "B. shy", "C. motivated", "D. mature"], answer: 1 },
+
+        // ========== ERROR CORRECTION ==========
+        { section: "ERROR CORRECTION", type: "mcq", text: "98. Underlined part error: (1) Wearing uniforms help students feel equal whether they are rich or poor.", options: ["A. whether", "B. help", "C. Wearing", "D. feel"], answer: 1 },
+        { section: "ERROR CORRECTION", type: "mcq", text: "99. Error: Developing new technologies are time-consuming and expensive.", options: ["A. developing", "B. technologies", "C. are", "D. time-consuming"], answer: 2 },
+        { section: "ERROR CORRECTION", type: "mcq", text: "100. Error: It was yesterday when my teacher gave a presentation on how to develop decision-making skills.", options: ["A. was", "B. when", "C. gave", "D. how"], answer: 1 },
+        { section: "ERROR CORRECTION", type: "mcq", text: "101. Error: It is working part-time that allows you gain some work experience and improve social skills.", options: ["A. is", "B. that", "C. gain", "D. experience"], answer: 2 },
+        { section: "ERROR CORRECTION", type: "mcq", text: "102. Error: It is freedom from parental control which many teenagers want as they grow older.", options: ["A. is", "B. parental", "C. which", "D. as"], answer: 2 },
+        { section: "ERROR CORRECTION", type: "mcq", text: "103. Error: It's often safer to stay with your friends or in a group, although bullies are less likely to target a group.", options: ["A. safer", "B. with", "C. although", "D. to target"], answer: 2 },
+        { section: "ERROR CORRECTION", type: "mcq", text: "104. Error: As some students are living in poverty, they are still very positive about the future.", options: ["A. As", "B. are living", "C. are", "D. positive about"], answer: 0 },
+        { section: "ERROR CORRECTION", type: "mcq", text: "105. Error: In spite of the negative impact on students' mental health, cyberbullying can also affect their academic performance.", options: ["A. In spite of", "B. on", "C. mental health", "D. affect"], answer: 0 }
+    ];
+
+    // Scripts cho listening
+    const scripts = {
+        1: `SCRIPT TASK 1:\nHost: Welcome, ladies and gentlemen, to another exciting episode of "Earth Talk."...\nGuest: Absolutely. Heritage sites are places of historical, cultural, and natural value...\n(Full script in đề cương)`,
+        2: `SCRIPT TASK 2:\nIn the teen years, young people develop and practice skills they will need as adults...\n(Full script as provided)`,
+        3: `SCRIPT TASK 3:\nMeet Amber. Amber used to love school, but then she hated going...\n(Full script as provided)`
+    };
+
+    let submitted = false;
+
+    function renderQuiz() {
+        const form = document.getElementById('quizForm');
+        form.innerHTML = '';
+        let currentSection = '';
+        let passageText = '';
+
+        quizData.forEach((q, index) => {
+            if (q.section !== currentSection) {
+                currentSection = q.section;
+                const secDiv = document.createElement('div');
+                secDiv.className = 'section-title';
+                secDiv.innerHTML = `<h3>${currentSection}</h3>`;
+                form.appendChild(secDiv);
+                // Hiển thị passage nếu có
+                if (q.passage) {
+                    passageText = q.passage;
+                    const passDiv = document.createElement('div');
+                    passDiv.className = 'passage';
+                    passDiv.textContent = passageText;
+                    form.appendChild(passDiv);
+                } else {
+                    passageText = '';
+                }
+            } else if (q.passage) {
+                passageText = q.passage;
+                const passDiv = document.createElement('div');
+                passDiv.className = 'passage';
+                passDiv.textContent = passageText;
+                form.appendChild(passDiv);
+            }
+
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question';
+            qDiv.id = `q-${index}`;
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'q-title';
+            titleDiv.textContent = q.text;
+            qDiv.appendChild(titleDiv);
+
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = 'options';
+
+            if (q.type === 'tf') {
+                ['True', 'False'].forEach((val, optIndex) => {
+                    const label = document.createElement('label');
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = `q${index}`;
+                    radio.value = val;
+                    if (submitted) radio.disabled = true;
+                    label.appendChild(radio);
+                    label.appendChild(document.createTextNode(' ' + val));
+                    optionsDiv.appendChild(label);
+                });
+            } else {
+                q.options.forEach((opt, optIndex) => {
+                    const label = document.createElement('label');
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = `q${index}`;
+                    radio.value = optIndex;
+                    if (submitted) radio.disabled = true;
+                    label.appendChild(radio);
+                    label.appendChild(document.createTextNode(' ' + opt));
+                    optionsDiv.appendChild(label);
+                });
+            }
+
+            const feedbackDiv = document.createElement('div');
+            feedbackDiv.className = 'feedback';
+            feedbackDiv.id = `fb-${index}`;
+            qDiv.appendChild(optionsDiv);
+            qDiv.appendChild(feedbackDiv);
+            form.appendChild(qDiv);
+        });
+    }
+
+    function submitQuiz() {
+        if (submitted) return;
+        submitted = true;
+        let correctCount = 0;
+        const total = quizData.length;
+
+        quizData.forEach((q, index) => {
+            const name = `q${index}`;
+            const selected = document.querySelector(`input[name="${name}"]:checked`);
+            const feedbackDiv = document.getElementById(`fb-${index}`);
+            const qDiv = document.getElementById(`q-${index}`);
+
+            let userAnswer = null;
+            if (q.type === 'tf') {
+                userAnswer = selected ? selected.value : null;
+            } else {
+                userAnswer = selected ? parseInt(selected.value) : null;
+            }
+
+            let isCorrect = false;
+            if (q.type === 'tf') {
+                isCorrect = userAnswer === q.answer;
+            } else {
+                isCorrect = userAnswer === q.answer;
+            }
+
+            if (isCorrect) {
+                correctCount++;
+                qDiv.classList.add('correct');
+                feedbackDiv.textContent = '✓ Chính xác!';
+                feedbackDiv.style.color = 'green';
+            } else {
+                qDiv.classList.add('incorrect');
+                let correctDisplay = '';
+                if (q.type === 'tf') {
+                    correctDisplay = q.answer;
+                } else {
+                    correctDisplay = q.options[q.answer];
+                }
+                feedbackDiv.textContent = `✗ Đáp án đúng: ${correctDisplay}`;
+                feedbackDiv.style.color = 'red';
+            }
+            feedbackDiv.classList.add('show');
+
+            // Disable radio buttons
+            const radios = document.querySelectorAll(`input[name="${name}"]`);
+            radios.forEach(radio => radio.disabled = true);
+        });
+
+        const scorePanel = document.getElementById('scorePanel');
+        scorePanel.innerHTML = `Điểm của bạn: ${correctCount} / ${total} (${((correctCount/total)*100).toFixed(1)}%)`;
+        scorePanel.classList.add('show');
+    }
+
+    function resetQuiz() {
+        submitted = false;
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.checked = false;
+            radio.disabled = false;
+        });
+        document.querySelectorAll('.question').forEach(qDiv => {
+            qDiv.classList.remove('correct', 'incorrect');
+        });
+        document.querySelectorAll('.feedback').forEach(fb => {
+            fb.textContent = '';
+            fb.classList.remove('show');
+        });
+        document.getElementById('scorePanel').classList.remove('show');
+    }
+
+    // Toggle script
+    let scriptVisible = false;
+    document.getElementById('toggleScriptBtn').addEventListener('click', function() {
+        const container = document.getElementById('scriptContainer');
+        if (!scriptVisible) {
+            let html = '';
+            for (let key in scripts) {
+                html += `<div class="script-box show"><strong>Task ${key}:</strong><br>${scripts[key]}</div>`;
+            }
+            container.innerHTML = html;
+            this.textContent = 'Ẩn Script Listening';
+            scriptVisible = true;
+        } else {
+            container.innerHTML = '';
+            this.textContent = 'Hiện Script Listening';
+            scriptVisible = false;
+        }
+    });
+
+    document.getElementById('submitBtn').addEventListener('click', submitQuiz);
+    document.getElementById('resetBtn').addEventListener('click', resetQuiz);
+
+    // Khởi tạo
+    renderQuiz();
+</script>
+</body>
+</html>
